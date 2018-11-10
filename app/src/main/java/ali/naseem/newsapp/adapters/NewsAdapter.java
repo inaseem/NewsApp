@@ -28,9 +28,11 @@ public class NewsAdapter extends ArrayAdapter<News> {
         TextView webTitle = convertView.findViewById(R.id.webTitle);
         TextView webPublicationDate = convertView.findViewById(R.id.webPublicationDate);
         TextView sectionName = convertView.findViewById(R.id.sectionName);
+        TextView authorTextView = convertView.findViewById(R.id.authorTextView);
         webTitle.setText(news.getWebTitle());
         webPublicationDate.setText(news.getWebPublicationDate());
         sectionName.setText(news.getSectionName());
+        authorTextView.setText(String.format("by %s", news.getAuthor()));
         return convertView;
     }
 

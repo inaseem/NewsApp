@@ -21,7 +21,7 @@ import java.util.List;
 import ali.naseem.newsapp.models.News;
 
 public class NewsLoader extends AsyncTaskLoader<List<News>> {
-    private final String URL = "https://content.guardianapis.com/search?q=debate&tag=politics/politics&from-date=2018-09-01&api-key=test";
+    private final String URL = "http://content.guardianapis.com/search?q=debates&section=politics&show-tags=contributor&api-key=test";
 
     public NewsLoader(Context context) {
         super(context);
@@ -59,7 +59,9 @@ public class NewsLoader extends AsyncTaskLoader<List<News>> {
                     String webPublicationDate = result.getString("webPublicationDate");
                     String webUrl = result.getString("webUrl");
                     String webTitle = result.getString("webTitle");
-                    news.add(new News(webTitle, sectionName, webUrl, webPublicationDate));
+                    JSONArray tags = result.getJSONArray("tags");
+                    String author = tags.getJSONObject(0).getString("webTitle");
+                    news.add(new News(webTitle, sectionName, webUrl, webPublicationDate, author));
                 }
             }
         } catch (JSONException e) {
