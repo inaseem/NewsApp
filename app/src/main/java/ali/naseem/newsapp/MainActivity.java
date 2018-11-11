@@ -4,10 +4,12 @@ import android.app.LoaderManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.Loader;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -23,11 +25,13 @@ import java.util.List;
 import ali.naseem.newsapp.adapters.NewsAdapter;
 import ali.naseem.newsapp.models.News;
 
-public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<List<News>> {
+public class MainActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<List<News>>, SharedPreferences.OnSharedPreferenceChangeListener {
 
     private NewsAdapter adapter;
     private ProgressBar loadingIndicator;
     private TextView empty_view;
+    private static final String REQUEST_URL = "https://content.guardianapis.com/search";
+    private static final int LOADER_ID = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +43,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         adapter = new NewsAdapter(this, new ArrayList<News>());
         listView.setAdapter(adapter);
         listView.setEmptyView(empty_view);
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        prefs.registerOnSharedPreferenceChangeListener(this);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
@@ -48,11 +54,52 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
                 startActivity(websiteIntent);
             }
         });
+        if (isNetworkAvailable()) {
+            empty_view.setText(null);
+            adapter.setItems(new ArrayList<News>());
+            LoaderManager loaderManager = getLoaderManager();
+            loadingIndicator.setVisibility(View.VISIBLE);
+            loaderManager.initLoader(LOADER_ID, null, this);
+        } else {
+            loadingIndicator.setVisibility(View.GONE);
+            empty_view.setText(R.string.no_internet_connection);
+        }
     }
 
     @Override
     public Loader<List<News>> onCreateLoader(int i, Bundle bundle) {
-        return new NewsLoader(this);
+        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(this);
+        String useDate = sharedPrefs.getString(
+                getString(R.string.usedate),
+                "none");
+
+        String orderBy = sharedPrefs.getString(
+                getString(R.string.orderby),
+                "none"
+        );
+        String section = sharedPrefs.getString(
+                getString(R.string.section),
+                "politics"
+        );
+        String pageSize = sharedPrefs.getString(
+                getString(R.string.pagesize),
+                "10"
+        );
+
+        Uri baseUri = Uri.parse(REQUEST_URL);
+        Uri.Builder uriBuilder = baseUri.buildUpon();
+        if (!orderBy.equals("none")) {
+            uriBuilder.appendQueryParameter("order-by", orderBy);
+        }
+        if (!useDate.equals("none")) {
+            uriBuilder.appendQueryParameter("use-date", useDate);
+        }
+        uriBuilder.appendQueryParameter("q", "debates");
+        uriBuilder.appendQueryParameter("page-size", pageSize);
+        uriBuilder.appendQueryParameter("section", section);
+        uriBuilder.appendQueryParameter("show-tags", "contributor");
+        uriBuilder.appendQueryParameter("api-key", "test");
+        return new NewsLoader(this, uriBuilder.toString());
     }
 
     @Override
@@ -84,11 +131,10 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
 
     private void loadNews() {
         if (isNetworkAvailable()) {
-            empty_view.setText(null);
-            adapter.setItems(new ArrayList<News>());
-            LoaderManager loaderManager = getLoaderManager();
+            adapter.clear();
+            empty_view.setVisibility(View.GONE);
             loadingIndicator.setVisibility(View.VISIBLE);
-            loaderManager.initLoader(1, null, this);
+            getLoaderManager().restartLoader(LOADER_ID, null, this);
         } else {
             loadingIndicator.setVisibility(View.GONE);
             empty_view.setText(R.string.no_internet_connection);
@@ -100,7 +146,11 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         switch (item.getItemId()) {
             case R.id.action_reload:
                 loadNews();
-                break;
+                return true;
+            case R.id.action_settings:
+                Intent intent = new Intent(this, SettingsActivity.class);
+                startActivity(intent);
+                return true;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -113,5 +163,18 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
             return true;
         }
         return false;
+    }
+
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        if (key.equals(getString(R.string.usedate)) ||
+                key.equals(getString(R.string.section)) ||
+                key.equals(getString(R.string.pagesize)) ||
+                key.equals(getString(R.string.orderby))) {
+            adapter.clear();
+            empty_view.setVisibility(View.GONE);
+            loadingIndicator.setVisibility(View.VISIBLE);
+            getLoaderManager().restartLoader(LOADER_ID, null, this);
+        }
     }
 }

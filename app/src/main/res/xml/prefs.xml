@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <ListPreference
+        android:defaultValue="none"
+        android:entries="@array/order_by"
+        android:entryValues="@array/order_by"
+        android:key="@string/orderby"
+        android:title="Order By" />
+    <ListPreference
+        android:defaultValue="none"
+        android:entries="@array/use_date"
+        android:entryValues="@array/use_date"
+        android:key="@string/usedate"
+        android:title="Use Date" />
+    <ListPreference
+        android:defaultValue="none"
+        android:entries="@array/page_size"
+        android:entryValues="@array/page_size"
+        android:key="@string/pagesize"
+        android:title="Page Size" />
+    <ListPreference
+        android:defaultValue="politics"
+        android:entries="@array/section"
+        android:entryValues="@array/section"
+        android:key="@string/section"
+        android:title="Section" />
+
+</PreferenceScreen>

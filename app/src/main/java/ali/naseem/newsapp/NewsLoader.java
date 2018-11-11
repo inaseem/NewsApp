@@ -21,10 +21,11 @@ import java.util.List;
 import ali.naseem.newsapp.models.News;
 
 public class NewsLoader extends AsyncTaskLoader<List<News>> {
-    private final String URL = "http://content.guardianapis.com/search?q=debates&section=politics&show-tags=contributor&api-key=test";
+    private String URL;
 
-    public NewsLoader(Context context) {
+    public NewsLoader(Context context, String URL) {
         super(context);
+        this.URL = URL;
     }
 
     @Override

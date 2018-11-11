@@ -6,4 +6,9 @@
         android:icon="@drawable/ic_refresh_black_24dp"
         android:title="Reload"
         app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/action_settings"
+        android:icon="@drawable/ic_settings_black_24dp"
+        android:title="Settings"
+        app:showAsAction="ifRoom" />
 </menu>

@@ -1,6 +1,33 @@
 <resources>
     <string name="app_name">NewsApp</string>
+    <string name="settings">Settings</string>
     <string name="no_internet_connection">No internet connection.</string>
     <string name="no_news">Currently there are no stories for you. You can always come later and check for all new stories.</string>
     <string name="no_news_action">Press the reload icon for some fresh news stories.</string>
+    <string-array name="use_date">
+        <item>none</item>
+        <item>published</item>
+        <item>newspaper-edition</item>
+        <item>last-modified</item>
+    </string-array>
+    <string-array name="page_size">
+        <item>10</item>
+        <item>15</item>
+        <item>20</item>
+        <item>25</item>
+    </string-array>
+    <string-array name="order_by">
+        <item>none</item>
+        <item>newest</item>
+        <item>oldest</item>
+        <item>relevance</item>
+    </string-array>
+    <string-array name="section">
+        <item>politics</item>
+        <item>education</item>
+    </string-array>
+    <string name="orderby">Order By</string>
+    <string name="pagesize">Page Size</string>
+    <string name="section">Section</string>
+    <string name="usedate">Use Date</string>
 </resources>
