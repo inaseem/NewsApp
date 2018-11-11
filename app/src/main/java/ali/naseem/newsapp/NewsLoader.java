@@ -34,7 +34,6 @@ public class NewsLoader extends AsyncTaskLoader<List<News>> {
 
     @Override
     public List<News> loadInBackground() {
-        System.out.println("INSIDE");
         List<News> list = new ArrayList<News>();
         try {
             list.addAll(extractFeatureFromJson(makeHttpRequest(createUrl(URL))));

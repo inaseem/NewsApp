@@ -3,6 +3,7 @@ package ali.naseem.newsapp;
 import android.app.LoaderManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.Loader;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -37,6 +38,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
         empty_view = findViewById(R.id.empty_view);
         adapter = new NewsAdapter(this, new ArrayList<News>());
         listView.setAdapter(adapter);
+        listView.setEmptyView(empty_view);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
@@ -49,18 +51,18 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     }
 
     @Override
-    public android.content.Loader<List<News>> onCreateLoader(int i, Bundle bundle) {
+    public Loader<List<News>> onCreateLoader(int i, Bundle bundle) {
         return new NewsLoader(this);
     }
 
     @Override
-    public void onLoadFinished(android.content.Loader<List<News>> loader, List<News> news) {
+    public void onLoadFinished(Loader<List<News>> loader, List<News> news) {
         loadingIndicator.setVisibility(View.GONE);
         if (news == null) {
             empty_view.setText(R.string.no_news);
         } else {
             if (news.size() == 0)
-                empty_view.setText(R.string.no_news);
+                empty_view.setText(R.string.no_news_action);
             else
                 empty_view.setVisibility(View.GONE);
             adapter.setItems(news);
@@ -68,7 +70,7 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     }
 
     @Override
-    public void onLoaderReset(android.content.Loader<List<News>> loader) {
+    public void onLoaderReset(Loader<List<News>> loader) {
         adapter.setItems(new ArrayList<News>());
         loadingIndicator.setVisibility(View.VISIBLE);
         empty_view.setText("");
@@ -81,8 +83,8 @@ public class MainActivity extends AppCompatActivity implements LoaderManager.Loa
     }
 
     private void loadNews() {
-        empty_view.setVisibility(View.GONE);
         if (isNetworkAvailable()) {
+            empty_view.setText(null);
             adapter.setItems(new ArrayList<News>());
             LoaderManager loaderManager = getLoaderManager();
             loadingIndicator.setVisibility(View.VISIBLE);
