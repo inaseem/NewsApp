@@ -59,7 +59,10 @@ public class NewsLoader extends AsyncTaskLoader<List<News>> {
                     String webUrl = result.getString("webUrl");
                     String webTitle = result.getString("webTitle");
                     JSONArray tags = result.getJSONArray("tags");
-                    String author = tags.getJSONObject(0).getString("webTitle");
+                    String author = null;
+                    if (tags.length() > 0) {
+                        author = tags.getJSONObject(0).getString("webTitle");
+                    }
                     news.add(new News(webTitle, sectionName, webUrl, webPublicationDate, author));
                 }
             }
@@ -82,7 +85,6 @@ public class NewsLoader extends AsyncTaskLoader<List<News>> {
             urlConnection.connect();
             inputStream = urlConnection.getInputStream();
             jsonResponse = readFromStream(inputStream);
-            System.out.println("RESPONSE=" + jsonResponse);
         } catch (IOException e) {
 
         } finally {

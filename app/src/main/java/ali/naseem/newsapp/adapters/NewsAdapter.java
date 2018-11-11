@@ -32,7 +32,11 @@ public class NewsAdapter extends ArrayAdapter<News> {
         webTitle.setText(news.getWebTitle());
         webPublicationDate.setText(news.getWebPublicationDate());
         sectionName.setText(news.getSectionName());
-        authorTextView.setText(String.format("by %s", news.getAuthor()));
+        if (news.getAuthor() == null) {
+            authorTextView.setVisibility(View.GONE);
+        } else {
+            authorTextView.setText(String.format("by %s", news.getAuthor()));
+        }
         return convertView;
     }
 
